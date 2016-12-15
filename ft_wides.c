@@ -6,7 +6,7 @@
 /*   By: lweinste <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/13 12:32:31 by lweinste          #+#    #+#             */
-/*   Updated: 2016/12/13 13:04:51 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/15 05:49:34 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ char    *ft_wstr(wchar_t *wstr)
 
 	i = 0;
     output = "";
+	if (wstr == NULL)
+		return (ft_strdup("(null)"));
     while (wstr[i])
         output = ft_strjoin(output, ft_wchar(wstr[i++]));
     return (output);

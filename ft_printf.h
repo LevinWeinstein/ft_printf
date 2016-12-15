@@ -6,7 +6,7 @@
 /*   By: lweinste <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/07 01:24:16 by lweinste          #+#    #+#             */
-/*   Updated: 2016/12/15 04:50:44 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/15 09:56:46 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 extern const char g_conversions[];
 extern const char g_values[];
-extern char    *(*handle[13])();
+extern char    *(*g_handle[19])();
 
 enum values
 {
@@ -35,6 +35,12 @@ enum values
 	e_wchar,
 	e_wstr,
 	e_modulus,
+	e_ichar,
+	e_uchar,
+	e_ulong,
+	e_ulonglong,
+	e_ix_lower,
+	e_ix_upper,
 };
 
 typedef struct				s_flag
@@ -66,12 +72,18 @@ char						*fp_wstr(va_list *val);
 char						*fp_mod(void);
 char						*fp_x_lower(va_list *val);
 char						*fp_x_upper(va_list *val);
+char						*fp_ix_lower(va_list *val);
+char						*fp_ix_upper(va_list *val);
 char						*fp_ptr(va_list *val);
 char						*fp_o(va_list *val);
 char						*fp_d(va_list *val);
 char						*fp_l(va_list *val);
 char						*fp_ll(va_list *val);
+char						*fp_ic(va_list *val);
 char						*fp_u(va_list *val);
+char						*fp_uc(va_list *val);
+char						*fp_ul(va_list *val);
+char						*fp_ull(va_list *val);
 char						*ft_wchar(wchar_t wc);
 char						*ft_wstr(wchar_t *wstr);
 char    					*ft_utoa_ptr(unsigned long long value, int base);

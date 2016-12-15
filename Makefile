@@ -1,7 +1,6 @@
 NAME = libftprintf.a
 
 LIBDIR = ./libft/
-YLIB = ./libft/libft.a
 ROOT = ./
 CC = gcc
 
@@ -19,6 +18,7 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	ar rc $(NAME) $(OBJS)
 	ranlib $(NAME)
+	rm -f ./libft/libft.h.gch
 
 $(OBJS): $(CFILES)
 	$(CC) -c $(CFLAGS) $(CFILES) -I $(CHEADERS)

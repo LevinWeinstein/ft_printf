@@ -6,7 +6,7 @@
 /*   By: lweinste <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/13 12:36:49 by lweinste          #+#    #+#             */
-/*   Updated: 2016/12/15 03:48:06 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/15 07:43:55 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,23 @@
 
 char   *fp_char(va_list *val)
 {
-    char *output;
-    char c;
-
-    output = (char *)malloc(2 * sizeof(char));
+	char *output;
+	char c;
+	output = (char *)malloc(2 * sizeof(char));
     c = va_arg(*val, int);
-    output[0] = c;
-    output[1] = '\0';
-    return (output);
-}
 
+	if (c == '\0')
+		output[0] = 7;
+	else
+		output[0] = c;
+	output[1] = '\0';
+	return (output);
+}
 char   *fp_str(va_list *val)
 {
-    char *output;
+	char *output;
 
-    output = va_arg(*val, char *);
+	output = va_arg(*val, char *);
 	if (output == NULL)
 		return ft_strdup("(null)");
     return (output);
@@ -40,7 +42,14 @@ char   *fp_wchar(va_list *val) //ft_wchar must be added to set still, (it's loca
     wchar_t wc;
 
     wc = va_arg(*val, wchar_t);  //CHANGING FROM FT_U2PTR, FT_WCHAR AND FT_WSTR TO PUTCHAR AND PUTSTR TO COMPILE BEFORE ADDING WSET. **CHANGE BACK**
-    output = ft_wchar(wc);
+	if (wc == L'\0')
+	{
+		output = (char *)malloc(2 * sizeof(char));
+		output[0] = 7;
+		output[1] = '\0';
+	}
+	else
+		output = ft_wchar(wc);
     return (output);
 }
 
@@ -60,6 +69,7 @@ char   *fp_mod(void)
     char *output;
 
     output = (char *)malloc(2 * sizeof(char));
+
     output[0] = '%';
     output[1] = '\0';
     return (output);

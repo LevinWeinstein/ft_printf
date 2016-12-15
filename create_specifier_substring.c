@@ -6,7 +6,7 @@
 /*   By: lweinste <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/13 12:45:47 by lweinste          #+#    #+#             */
-/*   Updated: 2016/12/15 05:20:15 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/15 11:45:04 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,45 @@ char	*to_next(char *output, char *str, int *another) //starts at start of first 
     return (output);
 }
 
-char    *next_flag(void *next, char *(*handler[13])(void *), int format)
+char    *next_flag(void *next, char *(*handler[17])(void *), int format)
 {
     char    *output;
     
     output = (*handler[format])(next);
     return (output);
     
+}
+
+int		handle_u(char *str, char c)//add
+{
+	if (c == 'U' && str == NULL)
+		return (e_ulong);
+	if (c == 'u' && str == NULL)
+		return (e_unsigned);
+	if ((c == 'U' || c == 'u') && ft_strlen(str) == 2)
+		return (*str == 'h' ? e_uchar : e_ulonglong);
+	if ((c == 'U' && *str != 'h'))
+		return (e_ulonglong);
+	if (c == 'u' && *str == 'l')
+		return (e_ulong);
+	if (c == 'u' && *str != 'h')
+		return (e_ulonglong);
+	if (c == 'u' && *str == 'h')
+		return (e_char);
+	return (e_longlong);
+}
+int		handle_x(t_format saved) //add
+{
+	int n;
+
+	n = 0;
+	if (saved.modifier == NULL || saved.modifier[0] == 'h')
+		n = e_ix_lower;
+	else
+		n = e_hex_lower;
+	if (saved.conversion == 'X')
+		n += 1;
+	return (n);
 }
 
 int     get_type(t_format unread)
@@ -51,9 +83,9 @@ int     get_type(t_format unread)
     else if(unread.conversion == 'D')
         return (unread.modifier[0] == 'l' ? e_longlong : e_int);
     if (unread.conversion == 'U' || unread.conversion == 'u')
-        return e_unsigned;
+        return (handle_u(unread.modifier, unread.conversion));
     if (unread.conversion == 'X' || unread.conversion == 'x')
-        return (unread.conversion == 'X' ? e_hex_upper : e_hex_lower);
+        return (handle_x(unread));
     if (unread.conversion == 'p')
         return (e_pointer);
     if (unread.conversion == 'o' || unread.conversion == 'O')
@@ -66,7 +98,7 @@ int     get_type(t_format unread)
         return (unread.conversion == 'S' ? e_wstr : e_wchar);
     return (e_modulus);
 }
-
+//add these three to header
 int    is_number(t_format *saved)
 {
     if (saved->conversion == 'o' || saved->conversion == 'O')
@@ -84,31 +116,41 @@ int		pign(char c)
 {
 	return (c == '%' || c == 'X' || c == 'x');
 }
+int		iszero(t_format *format, char *str)
+{
+	if (format->conversion == '%')
+		return (0);
+	if (isnumber(format->conversion) || pign(format->conversion))
+		return (ft_atoi(str) == 0 ? 1 : 0);
+	return (1);
+}
 
-char *handle_flags(t_format *saved, char *str)
+
+//end
+char *handle_flags(t_format *s, char *str)
 {
     t_flag *flagset;
 
     flagset = (t_flag *)malloc(sizeof(t_flag));
-    store_flag(flagset, saved->flags);
+    store_flag(flagset, s->flags);
    
-	if(saved->precision > (int)ft_strlen(str) && is_number(saved))
-        str = zero_width(str, saved->precision);
-	else if (saved->precision != -1 && !pign(saved->conversion) &&!isnumber(saved->precision))
-		str = ft_strndup(str, saved->precision); 
-    if (flagset->plus && (saved->conversion == 'i' || saved->conversion == 'd' || saved->conversion == 'D'))
+	if(s->precision > (int)ft_strlen(str) && is_number(s))
+        str = zero_width(str, s->precision);
+	else if (s->precision != -1 && iszero(s, str))
+		str = ft_strndup(str, s->precision);
+	if (flagset->plus && (s->conversion == 'i' || s->conversion == 'd' || s->conversion == 'D'))
         str = add_plus(str);
-    else if (flagset->space && (saved->conversion == 'i' || saved->conversion == 'd' || saved->conversion == 'D'))
+    else if (flagset->space && (s->conversion == 'i' || s->conversion == 'd' || s->conversion == 'D'))
         str = add_space(str);
-    if (saved->field != 0 && flagset->minus)
-        str = left_width(str, saved->field);
+    if (s->field != 0 && flagset->minus)
+        str = left_width(str, s->field);
     else if (flagset->zero)
-        str = zero_width(str, saved->field);
-    if(flagset->hash && (saved->conversion == 'x' || saved->conversion == 'X'|| saved->conversion == 'p'))
-        str = (ft_atoi(str) == 0) ? str : add_0x(str, saved->conversion);
-    if(flagset->hash && (saved->conversion == 'o' || saved->conversion == 'O'))
+        str = zero_width(str, s->field);
+    if(flagset->hash && (s->conversion == 'x' || s->conversion == 'X'|| s->conversion == 'p'))
+        str = (ft_atoi(str) == 0) ? str : add_0x(str, s->conversion);
+    if(flagset->hash && (s->conversion == 'o' || s->conversion == 'O'))
         str = add_0(str);
-	if (!flagset->zero && !flagset->minus)
-		str = field_width(str, saved->field);
+	if ((!flagset->zero && !flagset->minus))
+		str = field_width(str, s->field);
     return (str);
 }

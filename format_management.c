@@ -6,7 +6,7 @@
 /*   By: lweinste <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/13 12:41:03 by lweinste          #+#    #+#             */
-/*   Updated: 2016/12/15 05:03:28 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/15 08:03:31 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,21 +48,21 @@ t_format    *read_spec(char *str)
     char        *string;
     t_format    *new;
 
-    string = strdup(str);
+    string = ft_strdup(str);
     new = new_format(); 
     if((i = is_flag(string)) > 0)
-        new->flags = strndup(string, is_flag(string));
+        new->flags = ft_strndup(string, is_flag(string));
     string += i;
     if ((i = is_field(string)) > 0)
-        new->field = atoi(string);
+        new->field = ft_atoi(string);
     string += i;
     if ((i = is_precision(string)) > 0)
-        new->precision = ft_isdigit(string[1]) ? atoi(string + 1) : 0;
+        new->precision = ft_isdigit(string[1]) ? ft_atoi(string + 1) : 0;
     else if (i > 0)
         new->precision = 0;
     string += i;
     if ((i = is_modifier(string)) > 0)
-        new->modifier = strndup(string, is_modifier(string));
+        new->modifier = ft_strndup(string, is_modifier(string));
     string += i;
     if (is_conversion(*(string)))
         new->conversion = *string;
