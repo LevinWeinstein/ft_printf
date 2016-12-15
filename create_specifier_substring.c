@@ -6,7 +6,7 @@
 /*   By: lweinste <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/13 12:45:47 by lweinste          #+#    #+#             */
-/*   Updated: 2016/12/15 11:45:04 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/15 12:33:40 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,8 @@ int    is_number(t_format *saved)
         return (1);
     if (saved->conversion == 'u' || saved->conversion == 'U')
         return (1);
+	if (saved->conversion == 'x' || saved->conversion == 'X')
+		return (1);
     return (0);
 }
 
@@ -116,11 +118,12 @@ int		pign(char c)
 {
 	return (c == '%' || c == 'X' || c == 'x');
 }
+
 int		iszero(t_format *format, char *str)
 {
 	if (format->conversion == '%')
 		return (0);
-	if (isnumber(format->conversion) || pign(format->conversion))
+	if (is_number(format))
 		return (ft_atoi(str) == 0 ? 1 : 0);
 	return (1);
 }
