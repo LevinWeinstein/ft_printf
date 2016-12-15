@@ -6,7 +6,7 @@
 /*   By: lweinste <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/13 12:45:47 by lweinste          #+#    #+#             */
-/*   Updated: 2016/12/15 12:33:40 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/15 15:14:45 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,8 @@ int		pign(char c)
 int		iszero(t_format *format, char *str)
 {
 	if (format->conversion == '%')
+		return (0);
+	if (format->conversion == 'c' || format->conversion == 'C')
 		return (0);
 	if (is_number(format))
 		return (ft_atoi(str) == 0 ? 1 : 0);
