@@ -24,6 +24,18 @@ char	*fp_ic(va_list *val)
 	return (output);
 }
 
+char	*fp_sd(va_list *val)
+{
+	char	*output;
+	int		n;
+	short	t;
+
+	n = va_arg(*val, int);
+	t = (short)n;
+	output = ft_itoa_base(t, 10);
+	return (output);
+}
+
 char	*fp_d(va_list *val)
 {
 	char	*output;
@@ -66,6 +78,17 @@ char	*fp_uc(va_list *val)
 	return (output);
 }
 
+char	*fp_us(va_list *val)
+{
+	char			*output;
+	int				t;
+	short			s;
+	
+	t = va_arg(*val, int);
+	s = (short)t;
+	output = ft_utoa_base_lower(s, 10);
+	return (output);
+}
 char	*fp_u(va_list *val)
 {
 	char			*output;

@@ -5,7 +5,8 @@
 
 int main()
 {
-	ft_printf("%p\n", 0);
-	printf("%p\n", 0);
+	int n = 2;
+	ft_printf("%.2p\n", &n);
+	printf("%.20p\n", &n);
 	return (0);
 }

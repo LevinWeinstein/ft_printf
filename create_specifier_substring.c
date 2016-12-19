@@ -71,11 +71,39 @@ int		handle_x(t_format saved) //add
 	return (n);
 }
 
+int		handle_o(char *str, char c)//add
+{
+	if (c == 'O' && str == NULL)
+		return (e_olong);
+	if (c == 'o' && str == NULL)
+		return (e_octal);
+	if ((c == 'o' || c == 'O') && ft_strlen(str) == 2)
+		return (*str == 'h' ? e_uchar : e_ulonglong);
+	if ((c == 'O' && *str != 'h'))
+		return (e_olonglong);
+	if (c == 'o' && *str == 'l')
+		return (e_olong);
+	if (c == 'o' && *str != 'h')
+		return (e_olonglong);
+	if (c == 'o' && *str == 'h')
+		return (e_ochar);
+	return (e_olonglong);
+}
+
+int		small_d(t_format unread)
+{
+	if (unread.modifier == NULL)
+		return e_int;
+	else if (ft_strlen(unread.modifier) == 2)
+		return (e_ichar);
+	return (e_short);
+}
+
 int     get_type(t_format unread)
 {
     if((unread.conversion == 'd' || unread.conversion == 'i') && 
         (unread.modifier == NULL || unread.modifier[0] == 'h'))
-        return e_int;
+        return (small_d(unread));
     else if (unread.conversion == 'd' || unread.conversion == 'i')
         return (ft_strlen(unread.modifier) == 1 ? e_long : e_longlong);
     if(unread.conversion == 'D' && unread.modifier == NULL)
@@ -96,7 +124,7 @@ int     get_type(t_format unread)
         return (unread.modifier == NULL ? e_str : e_wstr);
     if (unread.conversion == 'S' || unread.conversion == 'C')
         return (unread.conversion == 'S' ? e_wstr : e_wchar);
-    return (e_modulus);
+    return (unread.conversion == 'Z' ? e_z : (unread.conversion == 'R' ? e_r :e_modulus));
 }
 //add these three to header
 int    is_number(t_format *saved)
@@ -110,6 +138,8 @@ int    is_number(t_format *saved)
     if (saved->conversion == 'u' || saved->conversion == 'U')
         return (1);
 	if (saved->conversion == 'x' || saved->conversion == 'X')
+		return (1);
+	if (saved->conversion == 'p')
 		return (1);
     return (0);
 }
@@ -130,6 +160,7 @@ int		iszero(t_format *format, char *str)
 	return (1);
 }
 
+//s->precision + (negcheck(str) != 0)
 
 //end
 char *handle_flags(t_format *s, char *str)
@@ -137,10 +168,10 @@ char *handle_flags(t_format *s, char *str)
     t_flag *flagset;
 
     flagset = (t_flag *)malloc(sizeof(t_flag));
-    store_flag(flagset, s->flags);
+    store_flag(flagset, s->flags, s);
    
 	if(s->precision > (int)ft_strlen(str) && is_number(s))
-        str = zero_width(str, s->precision);
+        str = zero_width(str, s->precision + (negcheck(str) != 0));
 	else if (s->precision != -1 && iszero(s, str))
 		str = ft_strndup(str, s->precision);
 	if (flagset->plus && (s->conversion == 'i' || s->conversion == 'd' || s->conversion == 'D'))
@@ -151,7 +182,7 @@ char *handle_flags(t_format *s, char *str)
         str = left_width(str, s->field);
     else if (flagset->zero)
         str = zero_width(str, s->field);
-    if(flagset->hash && (s->conversion == 'x' || s->conversion == 'X'|| s->conversion == 'p'))
+    if(flagset->hash && (s->conversion == 'x' || s->conversion == 'X'))
         str = (ft_atoi(str) == 0) ? str : add_0x(str, s->conversion);
     if(flagset->hash && (s->conversion == 'o' || s->conversion == 'O'))
         str = add_0(str);

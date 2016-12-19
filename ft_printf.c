@@ -29,7 +29,7 @@ void	ft_putfull(char *str)
 	}
 }
 
-char    *fp_distributor(char *format, char *output, va_list *ap, char *(*handler[13])()) // To-Do: Pull Va-Arg piece from here, put into each pointer function individually.
+char    *fp_distributor(char *format, char *output, va_list *ap, char *(*handler[22])()) // To-Do: Pull Va-Arg piece from here, put into each pointer function individually.
 {
     int another;
     int which;

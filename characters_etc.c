@@ -74,3 +74,25 @@ char   *fp_mod(void)
     output[1] = '\0';
     return (output);
 }
+
+char   *fp_z(void)
+{
+    char *output;
+
+    output = (char *)malloc(2 * sizeof(char));
+
+    output[0] = 'Z';
+    output[1] = '\0';
+    return (output);
+}
+
+char   *fp_r(void)
+{
+    char *output;
+
+    output = (char *)malloc(2 * sizeof(char));
+
+    output[0] = 'R';
+    output[1] = '\0';
+    return (output);
+}

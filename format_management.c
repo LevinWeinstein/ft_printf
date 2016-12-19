@@ -58,8 +58,6 @@ t_format    *read_spec(char *str)
     string += i;
     if ((i = is_precision(string)) > 0)
         new->precision = ft_isdigit(string[1]) ? ft_atoi(string + 1) : 0;
-    else if (i > 0)
-        new->precision = 0;
     string += i;
     if ((i = is_modifier(string)) > 0)
         new->modifier = ft_strndup(string, is_modifier(string));
@@ -69,7 +67,13 @@ t_format    *read_spec(char *str)
     return (new);
 }
 
-void    store_flag(t_flag *flag, char *flag_str)
+void    check_edge(t_flag *flag, t_format *s)
+{
+    if (flag->zero && is_number(s) && s->precision > 0)
+        flag->zero = 0;
+}
+
+void    store_flag(t_flag *flag, char *flag_str, t_format *s)
 {
     int i;
 
@@ -89,6 +93,7 @@ void    store_flag(t_flag *flag, char *flag_str)
         flag->plus = (flag_str[i] == '+' || flag->plus == 1) ? 1 : 0;
         flag->minus = (flag_str[i] == '-' || flag->minus == 1) ? 1 : 0;
         flag->zero = (flag_str[i] == '0' || flag->zero == 1) ? 1 : 0;
+        check_edge(flag, s);
         flag->space = (flag_str[i] == ' ' || flag->space == 1) ? 1 : 0;
         i++;
     }

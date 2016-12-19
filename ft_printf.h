@@ -18,7 +18,7 @@
 
 extern const char g_conversions[];
 extern const char g_values[];
-extern char    *(*g_handle[19])();
+extern char    *(*g_handle[22])();
 
 enum values
 {
@@ -35,12 +35,19 @@ enum values
 	e_wchar,
 	e_wstr,
 	e_modulus,
-	e_ichar,
 	e_uchar,
 	e_ulong,
 	e_ulonglong,
 	e_ix_lower,
 	e_ix_upper,
+	e_ichar,
+	e_short,
+	e_r,
+	e_z
+	//e_ochar,
+	//e_olong,
+	//e_olonglong,
+	//e_oshort,
 };
 
 typedef struct				s_flag
@@ -80,6 +87,7 @@ char						*fp_d(va_list *val);
 char						*fp_l(va_list *val);
 char						*fp_ll(va_list *val);
 char						*fp_ic(va_list *val);
+char						*fp_sd(va_list *val);
 char						*fp_u(va_list *val);
 char						*fp_uc(va_list *val);
 char						*fp_ul(va_list *val);
@@ -95,9 +103,9 @@ int							is_conversion(const char c);
 int         				format_len(char *str);
 t_format					*new_format(void);
 t_format					*read_spec(char *str);
-void    					store_flag(t_flag *flag, char *flag_str);
+void    					store_flag(t_flag *flag, char *flag_str, t_format *s);
 char						*to_next(char *output, char *str, int *another);
-char    					*next_flag(void *next, char *(*handler[13])(void *), int format);
+char    					*next_flag(void *next, char *(*handler[20])(void *), int format);
 int     					get_type(t_format unread);
 int    						is_number(t_format *saved);
 char 						*handle_flags(t_format *saved, char *str);
@@ -108,7 +116,9 @@ char						*add_space(char *str);
 char						*field_width(char *str, int n);
 char						*left_width(char *str, int n);
 char						*zero_width(char *str, int n);
-char    					*fp_distributor(char *format, char *output, va_list *ap, char *(*handler[13])(void *));
+char    					*fp_distributor(char *format, char *output, va_list *ap, char *(*handler[20])(void *));
 int							ft_printf(const char *format, ...);
-
+char						negcheck(char *str);
+char						*fp_r(void);
+char						*fp_z(void);
 #endif
