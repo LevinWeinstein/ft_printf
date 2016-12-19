@@ -6,7 +6,10 @@
 int main()
 {
 	int n = 2;
-	ft_printf("%.2p\n", &n);
-	printf("%.20p\n", &n);
+	int m;
+	int o;
+
+   	m = printf("%03.2d\n", n);
+	o = ft_printf("%p\n", &n);
 	return (0);
 }

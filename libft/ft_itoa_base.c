@@ -6,7 +6,7 @@
 /*   By: exam <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/22 09:03:01 by exam              #+#    #+#             */
-/*   Updated: 2016/12/15 01:02:18 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/18 23:59:41 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@ static char		*str_zero(void)
 	return (output);
 }
 
-static long	abs_val(long n)
+static long		abs_val(long n)
 {
 	return (n >= 0 ? n : (n * -1));
 }
 
-static long	safe_abs_mod(long n, int base)
+static long		safe_abs_mod(long n, int base)
 {
 	int m;
 

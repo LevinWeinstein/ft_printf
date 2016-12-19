@@ -6,47 +6,62 @@
 /*   By: lweinste <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/13 12:45:47 by lweinste          #+#    #+#             */
-/*   Updated: 2016/12/15 15:14:45 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/19 04:19:21 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-char	*to_next(char *output, char *str, int *another) //starts at start of first char after last formspec
+char	*to_next(char *output, char *str, int *another)
 {
-	int i;			//index
-	int	found;		//found fspec?
+	int i;
+	int	found;
 
 	i = -1;
 	found = 0;
-	while(found == 0 && str[++i])
+	while (found == 0 && str[++i])
 		if (str[i] == '%' && format_len(&str[i]))
 			found = 1;
 	output = ft_strjoin(output, ft_strndup(str, i));
 	if (str[i])
-        *another = i;
-    else
-        *another = -1;
-    return (output);
+		*another = i;
+	else
+		*another = -1;
+	return (output);
 }
 
-char    *next_flag(void *next, char *(*handler[17])(void *), int format)
+int		is_lower(char c)
 {
-    char    *output;
-    
-    output = (*handler[format])(next);
-    return (output);
-    
+	if (c >= 'a' && c <= 'z')
+		return (1);
+	return (0);
 }
 
-int		handle_u(char *str, char c)//add
+char	*next_flag(void *next, char *(*handler[17])(void *), int format)
+{
+	char	*output;
+
+	output = (*handler[format])(next);
+	return (output);
+}
+
+int		cs(int c, int s, char spec, char *len)
+{
+	if (spec == 'U' && len[0] == 'h')
+		return (e_ulong);
+	if (ft_strlen(len) == 2 && is_lower(spec))
+		return (c);
+	return (s);
+}
+
+int		handle_u(char *str, char c)
 {
 	if (c == 'U' && str == NULL)
 		return (e_ulong);
 	if (c == 'u' && str == NULL)
 		return (e_unsigned);
-	if ((c == 'U' || c == 'u') && ft_strlen(str) == 2)
-		return (*str == 'h' ? e_uchar : e_ulonglong);
+	if ((c == 'U' || c == 'u'))
+		return (*str == 'h' ? cs(e_uc, e_us, c, str) : e_ulonglong);
 	if ((c == 'U' && *str != 'h'))
 		return (e_ulonglong);
 	if (c == 'u' && *str == 'l')
@@ -54,31 +69,51 @@ int		handle_u(char *str, char c)//add
 	if (c == 'u' && *str != 'h')
 		return (e_ulonglong);
 	if (c == 'u' && *str == 'h')
-		return (e_char);
+		return (e_uc);
 	return (e_longlong);
 }
-int		handle_x(t_format saved) //add
-{
-	int n;
 
-	n = 0;
-	if (saved.modifier == NULL || saved.modifier[0] == 'h')
-		n = e_ix_lower;
-	else
-		n = e_hex_lower;
-	if (saved.conversion == 'X')
-		n += 1;
-	return (n);
+int		handle_low_x(char *str)
+{
+	if (str == NULL)
+		return (e_hex_lower);
+	if (str[0] == 'h' && ft_strlen(str) == 2)
+		return (e_cx_lower);
+	if (str[0] == 'h')
+		return (e_sx_lower);
+	if (str[0] == 'l' && ft_strlen(str) == 1)
+		return (e_lx_lower);
+	return (e_llx_lower);
 }
 
-int		handle_o(char *str, char c)//add
+int		handle_up_x(char *str)
+{
+	if (str == NULL)
+		return (e_hex_upper);
+	if (str[0] == 'h' && ft_strlen(str) == 2)
+		return (e_cx_upper);
+	if (str[0] == 'h')
+		return (e_sx_upper);
+	if (str[0] == 'l' && ft_strlen(str) == 1)
+		return (e_lx_upper);
+	return (e_llx_upper);
+}
+
+int		handle_x(t_format saved)
+{
+	if (is_lower(saved.conversion))
+		return (handle_low_x(saved.modifier));
+	return (handle_up_x(saved.modifier));
+}
+
+int		handle_o(char *str, char c)
 {
 	if (c == 'O' && str == NULL)
 		return (e_olong);
 	if (c == 'o' && str == NULL)
 		return (e_octal);
-	if ((c == 'o' || c == 'O') && ft_strlen(str) == 2)
-		return (*str == 'h' ? e_uchar : e_ulonglong);
+	if ((c == 'o' || c == 'O'))
+		return (*str == 'h' ? cs(e_oc, e_os, c, str) : e_olonglong);
 	if ((c == 'O' && *str != 'h'))
 		return (e_olonglong);
 	if (c == 'o' && *str == 'l')
@@ -86,62 +121,69 @@ int		handle_o(char *str, char c)//add
 	if (c == 'o' && *str != 'h')
 		return (e_olonglong);
 	if (c == 'o' && *str == 'h')
-		return (e_ochar);
+		return (e_oc);
 	return (e_olonglong);
 }
 
 int		small_d(t_format unread)
 {
 	if (unread.modifier == NULL)
-		return e_int;
+		return (e_int);
 	else if (ft_strlen(unread.modifier) == 2)
 		return (e_ichar);
 	return (e_short);
 }
 
-int     get_type(t_format unread)
+int		parse_singles(char c)
 {
-    if((unread.conversion == 'd' || unread.conversion == 'i') && 
-        (unread.modifier == NULL || unread.modifier[0] == 'h'))
-        return (small_d(unread));
-    else if (unread.conversion == 'd' || unread.conversion == 'i')
-        return (ft_strlen(unread.modifier) == 1 ? e_long : e_longlong);
-    if(unread.conversion == 'D' && unread.modifier == NULL)
-        return e_long;
-    else if(unread.conversion == 'D')
-        return (unread.modifier[0] == 'l' ? e_longlong : e_int);
-    if (unread.conversion == 'U' || unread.conversion == 'u')
-        return (handle_u(unread.modifier, unread.conversion));
-    if (unread.conversion == 'X' || unread.conversion == 'x')
-        return (handle_x(unread));
-    if (unread.conversion == 'p')
-        return (e_pointer);
-    if (unread.conversion == 'o' || unread.conversion == 'O')
-        return (e_octal);
-    if (unread.conversion == 'c')
-        return (unread.modifier == NULL ? e_char : e_wchar);
-    if (unread.conversion == 's')
-        return (unread.modifier == NULL ? e_str : e_wstr);
-    if (unread.conversion == 'S' || unread.conversion == 'C')
-        return (unread.conversion == 'S' ? e_wstr : e_wchar);
-    return (unread.conversion == 'Z' ? e_z : (unread.conversion == 'R' ? e_r :e_modulus));
+	if (c == 'Z' || c == 'R')
+		return (c == 'Z' ? e_z : e_r);
+	return (e_modulus);
 }
-//add these three to header
-int    is_number(t_format *saved)
+
+int		get_type(t_format unread)
 {
-    if (saved->conversion == 'o' || saved->conversion == 'O')
-        return (1);
-    if (saved->conversion == 'd' || saved->conversion == 'D')
-        return (1);
-    if (saved->conversion == 'i' || saved->conversion == 'p')
-        return (1);
-    if (saved->conversion == 'u' || saved->conversion == 'U')
-        return (1);
+	if ((unread.conversion == 'd' || unread.conversion == 'i') &&
+			(unread.modifier == NULL || unread.modifier[0] == 'h'))
+		return (small_d(unread));
+	else if (unread.conversion == 'd' || unread.conversion == 'i')
+		return (ft_strlen(unread.modifier) == 1 ? e_long : e_longlong);
+	if (unread.conversion == 'D' && unread.modifier == NULL)
+		return (e_long);
+	else if (unread.conversion == 'D')
+		return (unread.modifier[0] == 'l' ? e_longlong : e_int);
+	if (unread.conversion == 'U' || unread.conversion == 'u')
+		return (handle_u(unread.modifier, unread.conversion));
+	if (unread.conversion == 'X' || unread.conversion == 'x')
+		return (handle_x(unread));
+	if (unread.conversion == 'p')
+		return (e_pointer);
+	if (unread.conversion == 'o' || unread.conversion == 'O')
+		return (handle_o(unread.modifier, unread.conversion));
+	if (unread.conversion == 'c')
+		return (unread.modifier == NULL ? e_char : e_wchar);
+	if (unread.conversion == 's')
+		return (unread.modifier == NULL ? e_str : e_wstr);
+	if (unread.conversion == 'S' || unread.conversion == 'C')
+		return (unread.conversion == 'S' ? e_wstr : e_wchar);
+	return (parse_singles(unread.conversion));
+}
+
+int		is_number(t_format *saved)
+{
+	if (saved->conversion == 'o' || saved->conversion == 'O')
+		return (1);
+	if (saved->conversion == 'd' || saved->conversion == 'D')
+		return (1);
+	if (saved->conversion == 'i' || saved->conversion == 'p')
+		return (1);
+	if (saved->conversion == 'u' || saved->conversion == 'U')
+		return (1);
 	if (saved->conversion == 'x' || saved->conversion == 'X')
 		return (1);
 	if (saved->conversion == 'p')
 		return (1);
-    return (0);
+	return (0);
 }
 
 int		pign(char c)
@@ -160,33 +202,47 @@ int		iszero(t_format *format, char *str)
 	return (1);
 }
 
-//s->precision + (negcheck(str) != 0)
-
-//end
-char *handle_flags(t_format *s, char *str)
+char	*check_err(char *str)
 {
-    t_flag *flagset;
+	if (*str == ' ' && str[1] == '-')
+	{
+		str[0] = '-';
+		str[1] = '0';
+		return (str);
+	}
+	return (str);
+}
 
-    flagset = (t_flag *)malloc(sizeof(t_flag));
-    store_flag(flagset, s->flags, s);
-   
-	if(s->precision > (int)ft_strlen(str) && is_number(s))
-        str = zero_width(str, s->precision + (negcheck(str) != 0));
+int		is_did(char c)
+{
+	if (c == 'd' || c == 'i' || c == 'D')
+		return (1);
+	return (0);
+}
+
+char	*handle_flags(t_format *s, char *str)
+{
+	t_flag *flagset;
+
+	flagset = (t_flag *)malloc(sizeof(t_flag));
+	store_flag(flagset, s->flags, s);
+	if (s->precision > (int)ft_strlen(str) && is_number(s))
+		str = zero_width(str, s->precision + (negcheck(str) != 0));
 	else if (s->precision != -1 && iszero(s, str))
 		str = ft_strndup(str, s->precision);
-	if (flagset->plus && (s->conversion == 'i' || s->conversion == 'd' || s->conversion == 'D'))
-        str = add_plus(str);
-    else if (flagset->space && (s->conversion == 'i' || s->conversion == 'd' || s->conversion == 'D'))
-        str = add_space(str);
-    if (s->field != 0 && flagset->minus)
-        str = left_width(str, s->field);
-    else if (flagset->zero)
-        str = zero_width(str, s->field);
-    if(flagset->hash && (s->conversion == 'x' || s->conversion == 'X'))
-        str = (ft_atoi(str) == 0) ? str : add_0x(str, s->conversion);
-    if(flagset->hash && (s->conversion == 'o' || s->conversion == 'O'))
-        str = add_0(str);
+	if (flagset->plus && is_did(s->conversion))
+		str = add_plus(str);
+	else if (flagset->space && is_did(s->conversion))
+		str = add_space(str);
+	if (s->field != 0 && flagset->minus)
+		str = left_width(str, s->field);
+	else if (flagset->zero)
+		str = zero_width(str, s->field);
+	if (flagset->hash && (s->conversion == 'x' || s->conversion == 'X'))
+		str = (ft_atoi(str) == 0) ? str : add_0x(str, s->conversion);
+	if (flagset->hash && (s->conversion == 'o' || s->conversion == 'O'))
+		str = add_0(str);
 	if ((!flagset->zero && !flagset->minus))
 		str = field_width(str, s->field);
-    return (str);
+	return (check_err(str));
 }

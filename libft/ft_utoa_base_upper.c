@@ -6,16 +6,16 @@
 /*   By: exam <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/22 09:03:01 by exam              #+#    #+#             */
-/*   Updated: 2016/12/15 04:59:07 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/19 00:16:56 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static char		g_values[] = {'0', '1', '2', '3', '4', '5',
+static char			g_values[] = {'0', '1', '2', '3', '4', '5',
 	'6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-static char		*str_zero(void)
+static char			*str_zero(void)
 {
 	char *output;
 
@@ -25,15 +25,15 @@ static char		*str_zero(void)
 	return (output);
 }
 
-static unsigned long		safe_mod(unsigned long n, int base)
+static uintmax_t	safe_mod(uintmax_t n, int base)
 {
-	int m;
+	uintmax_t m;
 
 	m = n % base;
 	return (m);
 }
 
-static unsigned long		get_digits(unsigned long value, int base)
+static int			get_digits(uintmax_t value, int base)
 {
 	int i;
 
@@ -46,20 +46,16 @@ static unsigned long		get_digits(unsigned long value, int base)
 	return (i);
 }
 
-char			*ft_utoa_base_upper(unsigned long value, int base)
+char				*ft_utoa_base_upper(uintmax_t value, int base)
 {
-	unsigned long		digits;
-	char	*output;
-	unsigned long safemod;
+	int				digits;
+	char			*output;
+	uintmax_t		safemod;
 
 	if (base < 2 || base > 16)
 		return ((char *)0);
 	if (value == 0)
 		return ((output = str_zero()));
-	/*if (value == 4294967296 && base == 16)
-		return ft_strdup("100000000");
-	if (value == 4294967296 && base == 10)
-		return ft_strdup("4294967296");*/
 	digits = get_digits(value, base);
 	output = (char *)malloc((digits + 1) * sizeof(char));
 	output[digits] = '\0';

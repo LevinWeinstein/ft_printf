@@ -6,16 +6,16 @@
 /*   By: exam <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/22 09:03:01 by exam              #+#    #+#             */
-/*   Updated: 2016/12/15 04:58:54 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/19 00:01:05 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static char		g_values[] = {'0', '1', '2', '3', '4', '5',
+static char			g_values[] = {'0', '1', '2', '3', '4', '5',
 	'6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
-static char		*str_zero(void)
+static char			*str_zero(void)
 {
 	char *output;
 
@@ -25,7 +25,7 @@ static char		*str_zero(void)
 	return (output);
 }
 
-static uintmax_t		safe_mod(uintmax_t n, int base)
+static uintmax_t	safe_mod(uintmax_t n, int base)
 {
 	uintmax_t m;
 
@@ -33,7 +33,7 @@ static uintmax_t		safe_mod(uintmax_t n, int base)
 	return (m);
 }
 
-static int		get_digits(uintmax_t value, int base)
+static int			get_digits(uintmax_t value, int base)
 {
 	int i;
 
@@ -46,10 +46,10 @@ static int		get_digits(uintmax_t value, int base)
 	return (i);
 }
 
-char			*ft_utoa_base_lower(uintmax_t value, int base)
+char				*ft_utoa_base_lower(uintmax_t value, int base)
 {
-	int		digits;
-	char	*output;
+	int				digits;
+	char			*output;
 	uintmax_t		safemod;
 
 	if (base < 2 || base > 16)

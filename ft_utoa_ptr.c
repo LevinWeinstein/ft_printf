@@ -6,16 +6,15 @@
 /*   By: lweinste <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/15 05:59:20 by lweinste          #+#    #+#             */
-/*   Updated: 2016/12/15 11:50:39 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/19 05:56:23 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define ssize_t long long
-#include <stdlib.h>
+#include "ft_printf.h"
 
-static char	g_values[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+static char		g_vals[] = "0123456789abcdef";
 
-static char	*str_zero(void)
+static char		*str_zero(void)
 {
 	char *output;
 
@@ -27,8 +26,7 @@ static char	*str_zero(void)
 	return (output);
 }
 
-
-static int		get_digits(ssize_t value, int base)
+static int		get_digits(uintmax_t value, int base)
 {
 	int i;
 
@@ -41,28 +39,24 @@ static int		get_digits(ssize_t value, int base)
 	return (i);
 }
 
-char	*ft_utoa_ptr(ssize_t value, int base)
+char			*ft_utoa_ptr(uintmax_t value, int base)
 {
-	int		negative;
 	int		digits;
 	char	*output;
 
 	if (base < 2 || base > 16)
-		return ((char *) 0);
+		return ((char *)0);
 	if (value == 0)
 		return ((output = str_zero()));
-	negative = ((value < 0 && base == 10)? 1 : 0);
 	digits = get_digits(value, base);
-	digits += negative + 2;
+	digits += 2;
 	output = (char *)malloc((digits + 1) * sizeof(char));
 	output[digits] = '\0';
 	output[0] = '0';
 	output[1] = 'x';
-	if (negative)
-		output[0] = '-';
 	while (value != 0)
 	{
-		output[--digits] = g_values[value % base];
+		output[--digits] = g_vals[value % base];
 		value /= base;
 	}
 	return (output);

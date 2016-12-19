@@ -6,7 +6,7 @@
 /*   By: lweinste <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/13 12:42:34 by lweinste          #+#    #+#             */
-/*   Updated: 2016/12/15 10:33:41 by lweinste         ###   ########.fr       */
+/*   Updated: 2016/12/19 04:20:47 by lweinste         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,14 @@ char	*left_width(char *str, int n)
 	return (output);
 }
 
-char		negcheck(char *str)
+char	negcheck(char *str)
 {
 	if (*str == '-')
 		return ('-');
 	if (*str == '+')
 		return ('+');
+	if (*str == ' ')
+		return (' ');
 	return (0);
 }
 
