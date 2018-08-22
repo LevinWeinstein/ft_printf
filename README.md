@@ -1,2 +1,2 @@
-# ft_printf_cur
+# ft_printf
 ## A relatively complete implimentation of the "printf" function from c
